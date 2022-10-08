@@ -1,0 +1,25 @@
+From: Sophie Brun <sophie@offensive-security.com>
+Date: Fri, 5 Nov 2021 09:44:38 +0100
+Subject: Do not run tests using Network
+
+
+Do not run test_smbserver.py. It requires a network access.
+---
+ tests/runall.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tests/runall.sh b/tests/runall.sh
+index feed0c6..14360ac 100755
+--- a/tests/runall.sh
++++ b/tests/runall.sh
+@@ -42,8 +42,8 @@ echo test_spnego.py
+ $RUN test_spnego.py 2>&1 1>/dev/null | tee -a $OUTPUTFILE
+ echo test_ntlm.py
+ $RUN test_ntlm.py 2>&1 1>/dev/null | tee -a $OUTPUTFILE
+-echo test_smbserver.py
+-$RUN test_smbserver.py 2>&1 1>/dev/null | tee -a $OUTPUTFILE
++#echo test_smbserver.py
++#$RUN test_smbserver.py 2>&1 1>/dev/null | tee -a $OUTPUTFILE
+ echo test_wmi.py OfflineTests
+ $RUN test_wmi.py OfflineTests 2>&1 1>/dev/null | tee -a $OUTPUTFILE
+ 

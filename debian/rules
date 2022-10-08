@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+
+# Common rules
+export PYBUILD_NAME=impacket
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_install:
+	dh_auto_install
+	# Drop upstream installed files
+	rm -rf debian/python*-impacket/usr/share/doc/impacket
+
+# Don't compress .py file
+override_dh_compress:
+	dh_compress -X.py
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	cd tests && PYTHONPATH=$(CURDIR) NO_REMOTE=True ./runall.sh
+endif

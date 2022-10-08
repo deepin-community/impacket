@@ -1,0 +1,331 @@
+impacket (0.9.24-1) unstable; urgency=medium
+
+  * Team upload.
+  * debian/watch: use github tarball instead of pypi release because it
+    contains the __pycache__ dirs and *.pyc files)
+  * New upstream version 0.9.24
+  * Update debian/copyright
+  * Refresh patches and remove cve-2021-31800.patch merged upstream
+  * Run tests during the build
+  * Remove tests that require network access
+  * Bump Standards-Version to 4.6.0 (no change)
+
+ -- Sophie Brun <sophie@offensive-security.com>  Fri, 05 Nov 2021 10:07:07 +0100
+
+impacket (0.9.22-2) unstable; urgency=medium
+
+  * Team upload.
+  * Resolve CVE-2021-31800: Fix Path Traversal vulnerabilities by checking
+    path prefix against incoming filename. (Closes: #988141)
+
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 21 May 2021 13:02:37 -0400
+
+impacket (0.9.22-1) unstable; urgency=medium
+
+  * Team Upload.
+
+  [ Ondřej Nový ]
+  * d/control: Update Maintainer field with new Debian Python Team
+    contact address.
+  * d/control: Update Vcs-* fields with new Debian Python Team Salsa
+    layout.
+
+  [ Sophie Brun ]
+  * New upstream version 0.9.22
+  * Bump debian/watch to version 4
+
+  [ Emmanuel Arias ]
+  * d/control: Bump debhelper-compat to 13 (from 12).
+  * d/upstream: add metadata information.
+
+  [ Raphaël Hertzog ]
+  * Set upstream metadata fields: Repository, Repository-Browse.
+
+ -- Raphaël Hertzog <raphael@offensive-security.com>  Tue, 24 Nov 2020 16:13:18 +0100
+
+impacket (0.9.21-2) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Emmanuel Arias ]
+  * d/control: Add python3-pkg-resources build dependency (Closes: #963020).
+  * d/gbp.conf: Set debian/master as default branch.
+  * d/salsa-ci.yml: enable salsa-ci.
+
+  [ Raphaël Hertzog ]
+  * Add explicit binary dependency on python3-pkg-resources until
+    https://github.com/SecureAuthCorp/impacket/issues/885 is fixed
+  * Drop python3-pkg-resources build dependency, it's implied by python3-setuptools
+
+ -- Raphaël Hertzog <raphael@offensive-security.com>  Thu, 18 Jun 2020 09:34:01 +0200
+
+impacket (0.9.21-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.9.21
+  * Update debian/copyright
+  * Refresh patches
+  * Bump Standards-Version (no change)
+
+ -- Sophie Brun <sophie@offensive-security.com>  Tue, 09 Jun 2020 20:38:55 +0200
+
+impacket (0.9.20-5) unstable; urgency=medium
+
+  * Team upload.
+  * Drop python2 support; Closes: #936730
+
+ -- Sandro Tosi <morph@debian.org>  Sun, 05 Jan 2020 14:19:48 -0500
+
+impacket (0.9.20-4) unstable; urgency=medium
+
+  * Team upload.
+  * Expand copyright file to cover more copyright notices (Closes: #942161)
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Sun, 20 Oct 2019 12:57:45 +0200
+
+impacket (0.9.20-3) unstable; urgency=medium
+
+  [ Raphaël Hertzog ]
+  * Team upload.
+  * Bump Standards-Version to 4.4.1.
+  * Fix copyright file (problems discovered by lintian).
+
+  [ Samuel Henrique ]
+  * d/control: Remove build-dep on python3-ldap3 as the package doesn't exist
+
+  [ Emmanuel Arias ]
+  * Add entry to d/copyright
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Wed, 16 Oct 2019 14:37:18 +0200
+
+impacket (0.9.20-2) unstable; urgency=medium
+
+  [ Sophie Brun ]
+  * Team upload.
+  * Fix path to examples scripts: now in python 3 package
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Thu, 03 Oct 2019 16:25:27 +0200
+
+impacket (0.9.20-1) unstable; urgency=medium
+
+  [ Emmanuel Arias ]
+  * New upstream version 0.9.20
+  * Create package for python3
+    - Update d/control file.
+      - Add python3-all and python3-setuptools to Build-Depends field.
+    - Update d/rules file.
+  * Bump Standards-Version to 4.4.0
+  * Bump debhelper-compat to 12
+  * Add Build-Depends to debian/control file
+
+  [ Sophie Brun ]
+  * Override dh_auto_test for the moment
+  * Update debian/script to use Python 3
+  * Add Breaks and Replaces
+  * Add a patch to avoid the installation of examples as scripts
+
+  [ Ondřej Nový ]
+  * Use debhelper-compat instead of debian/compat
+
+  [ Raphaël Hertzog ]
+  * Restore python-impacket for now, it still has reverse dependencies in
+    Debian and in Kali.
+  * Rename debian/{install,links,examples} to debian/python3-impacket.* so
+    that they affect the content of python3-impacket.
+  * Drop files installed in /usr/share/doc/impacket and install README.md
+    in the correct documentation directory.
+
+ -- Emmanuel Arias <emmanuelarias30@gmail.com>  Thu, 26 Sep 2019 10:30:03 -0300
+
+impacket (0.9.19-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/changelog: Remove trailing whitespaces.
+
+  [ Emmanuel Arias ]
+  * New upstream version 0.9.19
+  * Update d/rules:
+    - Don't delete impackage.egg-info. This folder come from
+      upstream.
+
+ -- Emmanuel Arias <emmanuelarias30@gmail.com>  Fri, 03 May 2019 01:23:23 +0000
+
+impacket (0.9.17-1) unstable; urgency=medium
+
+  [Ondřej Nový]
+  * Convert git repository from git-dpm to gbp layout
+
+  [Emmanuel Arias]
+  * New upstream
+  * Update d/rules, add PYBUILD_NAME and DEB_BUILD_MAINT_OPTINOS
+  * Update d/rules, add override_dh_auto_clean to remove *.egg-info
+  * Remove not used patch
+
+ -- Emmanuel Arias <emmanuelarias30@gmail.com>  Thu, 29 Nov 2018 21:52:10 -0300
+
+impacket (0.9.15-5) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/control: Set Vcs-* to salsa.debian.org
+  * d/copyright: Use https protocol in Format field
+  * d/watch: Use https protocol
+  * d/changelog: Remove trailing whitespaces
+
+  [ Emmanuel Arias ]
+  * d/control: Change Maintainer field for Debian Python Module Team
+  * d/control: Change Uploaders field for me (Closes: #895785)
+  * d/control: Update debhelper from 9 to 11
+  * d/control: Update Standards-Version  to 4.1.4
+  * d/control: Add autopkgtest-pkg-python to Testsuite
+  * d/compat: Update from 9 to 11
+  * d/copyright: Add me on copyright of debian field.
+
+ -- Emmanuel Arias <emmanuelarias30@gmail.com>  Thu, 24 May 2018 06:45:13 -0300
+
+impacket (0.9.15-1) unstable; urgency=medium
+
+  [ Arnaud Fontaine ]
+  * New upstream release. Closes: #795480.
+  * Import changes from Kali. Thanks to Raphaël Hertzog and Sophie Brun.
+
+  [ Ondřej Nový ]
+  * d/control: Fixed VCS URL (https).
+
+ -- Arnaud Fontaine <arnau@debian.org>  Thu, 01 Dec 2016 15:40:01 +0900
+
+impacket (0.9.15-0kali2) kali-dev; urgency=medium
+
+  * Import new upstream release
+  * Update the packaging to use debhelper 9
+  * Add symlinks to have important examples in /usr/bin/: impacket-wmiexec,
+    impacket-netview, impacket-rpcdump, impacket-secretsdump,
+    impacket-samrdump (closes 3381).
+
+ -- Sophie Brun <sophie@freexian.com>  Mon, 19 Sep 2016 15:46:31 +0200
+
+impacket (0.9.13-0kali1) kali-dev; urgency=medium
+
+  * New upstream release.
+  * Add Depends on python-pyasn1 (>= 0.1.7).
+  * Refresh 00_setup.patch.
+
+ -- Raphaël Hertzog <hertzog@debian.org>  Fri, 14 Aug 2015 13:53:42 +0200
+
+impacket (0.9.12-1~0kali1) kali; urgency=medium
+
+  * Import new version from debian
+
+ -- Sophie Brun <sophie@freexian.com>  Mon, 04 May 2015 16:25:17 +0200
+
+impacket (0.9.12-1) unstable; urgency=medium
+
+  * New upstream release. Closes: #703784.
+    + d/patches: refreshed.
+  * d/watch: upstream source location has changed.
+  * d/control: bump Standards-Version to 3.9.6. No changes needed.
+
+ -- Arnaud Fontaine <arnau@debian.org>  Thu, 16 Oct 2014 11:57:09 +0900
+
+impacket (0.9.10-1) unstable; urgency=low
+
+  [ Arnaud Fontaine ]
+  * New upstream release. Closes: #703773.
+    + Merge python-impacket-doc into python-impacket as doc is not included
+      in upstream source anymore.
+    + Refresh debian/patches/*.
+    + debian/control: add Depends against python-crypto.
+  * debian/control:
+    + Bump Standards-Version to 3.9.4.
+      - Add debian/README.source.
+  * Use dh_python2 rather than deprecated pysupport:
+    + debian/control:
+      - Bump cdbs version to 0.4.90~.
+      - Replace python-dev by python-all (all) and bump version to 2.6.6-3~.
+      - Drop Build-Depends against python-support.
+    + debian/rules: remove DEB_PYTHON_SYSTEM line.
+    + Remove debian/pyversions and debian/pycompat.
+  * Use 3.0 (quilt) format.
+    + debian/rules: no need to use patchsys-quilt.mk anymore.
+    + debian/control: remove Build-Depends on quilt.
+  * Update copyright years.
+  * New upstream URL.
+    + Update URL in debian/watch and debian/copyright.
+
+  [ Sandro Tosi ]
+  * debian/control:
+    + Uniforming Vcs-Browser field.
+    + Switch Vcs-Browser field to viewsvn.
+
+  [ Jakub Wilk ]
+  * Use canonical URIs for Vcs-* fields.
+
+ -- Arnaud Fontaine <arnau@debian.org>  Mon, 27 May 2013 18:02:01 +0900
+
+impacket (0.9.9.9-1kali0) kali; urgency=low
+
+  * Imported new upstream version
+
+ -- Devon Kearns <dookie@kali.org>  Sat, 09 Feb 2013 16:59:01 -0700
+
+impacket (0.9.6.0-3) unstable; urgency=low
+
+  [ Arnaud Fontaine ]
+  * New email address.
+  * Remove useless debian/control.in.
+  * debian/control:
+    + Update Standards-Version to 3.7.3. No changes needed.
+  * debian/copyright:
+    + Add package license.
+
+  [ Piotr Ożarowski ]
+  * debian/control:
+    + Added Vcs-Svn, Vcs-Browser and Homepage fields.
+
+  [ Jan Michael Alonzo ]
+  * Fix watch file and updated it to version=3. Closes: #450377.
+
+ -- Arnaud Fontaine <arnau@debian.org>  Sun, 09 Dec 2007 23:36:25 +0000
+
+impacket (0.9.6.0-2) unstable; urgency=low
+
+  * debian/control.in:
+    + Add missing Recommends for python-impacket-doc against python-pcapy.
+      Closes: #389657.
+
+ -- Arnaud Fontaine <arnaud@andesi.org>  Wed, 27 Sep 2006 08:33:20 +0200
+
+impacket (0.9.6.0-1) unstable; urgency=low
+
+  * New upstream release.
+    + Add debian/python-impacket-doc.docs for doc/.
+  * debian/control.in:
+    + Update Standards-Version to 3.7.2. No changes needed.
+  * New Python policy changes. Closes: #373444.
+    + debian/compat:
+      - Update debhelper compatibility to 5.
+    + debian/rules:
+      - Add DEB_PYTHON_SYSTEM=pysupport.
+    + debian/control.in
+      - Clean Build-Depends and Depends, cdbs handles that
+        automatically now.
+      - XB-Python-Version and Provides for binary package.
+    + debian/postinst && debian/prerm:
+      - Remove "hand made" python-support stuff, cdbs does this.
+
+ -- Arnaud Fontaine <arnaud@andesi.org>  Tue, 20 Jun 2006 00:20:32 +0200
+
+impacket (0.9.5.2-2) unstable; urgency=low
+
+  * Use python-support and then remove python2.3-impacket and
+    python2.4-impacket packages.
+  * Move all Build-Depends to Build-Depends-Indep according
+    to the debian policy.
+  * Update Standards-Version to 3.7.0 in debian/control*.
+
+ -- Arnaud Fontaine <arnaud@andesi.org>  Tue, 18 Apr 2006 19:45:47 +0200
+
+impacket (0.9.5.2-1) unstable; urgency=low
+
+  * Initial release. Closes: #361966.
+
+ -- Arnaud Fontaine <arnaud@andesi.org>  Tue, 11 Apr 2006 15:51:41 +0200

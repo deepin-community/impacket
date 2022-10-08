@@ -1,0 +1,5 @@
+usr/share/impacket/script usr/bin/impacket-netview
+usr/share/impacket/script usr/bin/impacket-rpcdump
+usr/share/impacket/script usr/bin/impacket-samrdump
+usr/share/impacket/script usr/bin/impacket-secretsdump
+usr/share/impacket/script usr/bin/impacket-wmiexec

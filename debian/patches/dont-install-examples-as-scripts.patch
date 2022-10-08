@@ -1,0 +1,23 @@
+From: Sophie Brun <sophie@offensive-security.com>
+Date: Thu, 26 Sep 2019 11:47:39 +0200
+Subject: Don't install all examples as scripts
+
+Last-Update: 2021-10-29
+Description: all examples/* are installed in /usr/bin
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 12663f4..88efa4e 100644
+--- a/setup.py
++++ b/setup.py
+@@ -66,7 +66,7 @@ setup(name = PACKAGE_NAME,
+                 'impacket.examples.ntlmrelayx.clients', 'impacket.examples.ntlmrelayx.servers',
+                 'impacket.examples.ntlmrelayx.servers.socksplugins', 'impacket.examples.ntlmrelayx.utils',
+                 'impacket.examples.ntlmrelayx.attacks', 'impacket.examples.ntlmrelayx.attacks.httpattacks'],
+-      scripts = glob.glob(os.path.join('examples', '*.py')),
++#      scripts = glob.glob(os.path.join('examples', '*.py')),
+       data_files = data_files,
+       install_requires=['pyasn1>=0.2.3', 'pycryptodomex', 'pyOpenSSL>=0.16.2', 'six', 'ldap3>=2.5,!=2.5.2,!=2.5.0,!=2.6',
+                         'ldapdomaindump>=0.9.0', 'flask>=1.0', 'future', 'chardet'],

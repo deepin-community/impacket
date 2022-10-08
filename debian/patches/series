@@ -1,0 +1,2 @@
+dont-install-examples-as-scripts.patch
+do-not-run-tests-with-network.patch

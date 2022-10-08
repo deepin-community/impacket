@@ -1,0 +1,43 @@
+Source: impacket
+Maintainer: Debian Python Team <team+python@tracker.debian.org>
+Uploaders: Emmanuel Arias <emmanuelarias30@gmail.com>
+Section: python
+Priority: optional
+Vcs-Git: https://salsa.debian.org/python-team/packages/impacket.git
+Vcs-Browser: https://salsa.debian.org/python-team/packages/impacket
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+	       python-is-python3,
+               python3-all,
+	       python3-chardet,
+               python3-ldap,
+               python3-ldap3,
+	       python3-ldapdomaindump,
+               python3-openssl,
+	       python3-pcapy,
+               python3-pycryptodome,
+               python3-setuptools,
+               python3-six,
+Standards-Version: 4.6.0
+Homepage: https://github.com/CoreSecurity/impacket
+Testsuite: autopkgtest-pkg-python
+
+Package: python3-impacket
+Architecture: all
+# explicit dep on python3-pkg-resources until
+# https://github.com/SecureAuthCorp/impacket/issues/885 is fixed
+Depends: ${misc:Depends}, ${python3:Depends}, python3-pkg-resources
+Breaks: python-impacket (<< 0.9.20)
+Replaces: python-impacket (<< 0.9.20)
+Description: Python3 module to easily build and dissect network protocols
+ Impacket  is a  collection  of Python3  classes  focused on  providing
+ access  to network  packets.   Impacket allows  Python3 developers  to
+ craft and decode network packets in simple and consistent manner.  It
+ includes support for low-level protocols  such as IP, UDP and TCP, as
+ well as higher-level protocols such as NMB and SMB.
+ .
+ Impacket is highly  effective when used in conjunction  with a packet
+ capture utility or package such as Pcapy.  Packets can be constructed
+ from  scratch, as  well as  parsed from  raw data.   Furthermore, the
+ object  oriented API  makes  it  simple to  work  with deep  protocol
+ hierarchies.
