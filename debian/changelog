@@ -1,3 +1,90 @@
+impacket (0.12.0-3) unstable; urgency=medium
+
+  * d/control: Update my contact information. Also in d/copyright file.
+  * d/rules: Ignore tests/SMB_RPC/test_smbserver.py tests to avoid
+    break build with Python3.13 (Closes: #1082142).
+
+ -- Emmanuel Arias <eamanu@debian.org>  Sat, 16 Nov 2024 20:11:10 -0300
+
+impacket (0.12.0-2) unstable; urgency=medium
+
+  * Team upload.
+  * Drop unneeded B-D: python-is-python3, python3-ldapdomaindump,
+    python3-pcapy.
+
+ -- Andrey Rakhmatullin <wrar@debian.org>  Sat, 28 Sep 2024 12:47:06 +0500
+
+impacket (0.12.0-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.12.0 (Closes: #1067093)
+  * Use dh-sequence-python3
+  * Set Rules-Requires-Root: no
+
+ -- Alexandre Detiste <tchet@debian.org>  Wed, 18 Sep 2024 13:50:58 +0200
+
+impacket (0.11.0-2) unstable; urgency=medium
+
+  * Team upload.
+  * remove erroneous extraneous reference to 'future' from setup.py
+    (Closes: #1058057)
+  * add debian/.gitignore
+
+ -- Alexandre Detiste <tchet@debian.org>  Mon, 01 Jan 2024 21:18:29 +0100
+
+impacket (0.11.0-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.11.0
+  * Update debian/copyright
+  * Refresh patches
+  * Remove old build-dep python3-chardet
+  * Bump Standards-Version to 4.6.2 (no change required)
+
+ -- Sophie Brun <sophie@offensive-security.com>  Fri, 11 Aug 2023 09:58:10 +0200
+
+impacket (0.10.0-4) unstable; urgency=medium
+
+  [ Debian Janitor ]
+  * Set field Upstream-Contact in debian/copyright.
+
+ -- Jelmer Vernooĳ <jelmer@debian.org>  Sun, 16 Oct 2022 18:06:44 +0100
+
+impacket (0.10.0-3) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Arnaud Rebillout ]
+  * Update upstream url
+  * Import upstream fixes for python3-openssl >= 21.0.0
+  * Import upstream fixes for Python 3.10 compatibility
+
+  [ Michael Sprengel ]
+  * Make package MultiArch
+
+  [ Sophie Brun ]
+  * Bump Standards-Version to 4.6.1 (no change)
+
+ -- Sophie Brun <sophie@offensive-security.com>  Fri, 09 Sep 2022 11:29:02 +0200
+
+impacket (0.10.0-2) unstable; urgency=medium
+
+  [ Debian Janitor ]
+  * Trim trailing whitespace.
+  * Set upstream metadata fields: Contact, Security-Contact.
+
+ -- Jelmer Vernooĳ <jelmer@debian.org>  Thu, 26 May 2022 10:31:53 +0100
+
+impacket (0.10.0-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.10.0
+  * Refresh patches
+  * Add build-dep python3-pytest and adapt debian/rules for pytest
+  * Update debian/copyright
+
+ -- Sophie Brun <sophie@offensive-security.com>  Fri, 06 May 2022 09:56:14 +0200
+
 impacket (0.9.24-1) unstable; urgency=medium
 
   * Team upload.

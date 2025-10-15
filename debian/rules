@@ -4,9 +4,11 @@
 # Common rules
 export PYBUILD_NAME=impacket
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+# ignore tests/SMB_RPC/test_smbserver.py test until upstream fix py3.13 build.
+export PYBUILD_TEST_ARGS=-m "not remote" --ignore=tests/SMB_RPC/test_smbserver.py
 
 %:
-	dh $@ --with python3 --buildsystem=pybuild
+	dh $@ --buildsystem=pybuild
 
 override_dh_auto_install:
 	dh_auto_install
@@ -16,8 +18,3 @@ override_dh_auto_install:
 # Don't compress .py file
 override_dh_compress:
 	dh_compress -X.py
-
-override_dh_auto_test:
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	cd tests && PYTHONPATH=$(CURDIR) NO_REMOTE=True ./runall.sh
-endif

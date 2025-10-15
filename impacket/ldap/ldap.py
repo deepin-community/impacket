@@ -1,6 +1,8 @@
 # Impacket - Collection of Python classes for working with network protocols.
 #
-# SECUREAUTH LABS. Copyright (C) 2020 SecureAuth Corporation. All rights reserved.
+# Copyright Fortra, LLC and its affiliated companies 
+#
+# All rights reserved.
 #
 # This software is provided under a slightly modified version
 # of the Apache Software License. See the accompanying LICENSE file
@@ -20,7 +22,7 @@
 # ToDo:
 #   [x] Implement Paging Search, especially important for big requests
 #
-import os
+
 import re
 import socket
 from binascii import unhexlify
@@ -35,7 +37,7 @@ from impacket.ldap.ldapasn1 import Filter, Control, SimplePagedResultsControl, R
     KNOWN_CONTROLS, CONTROL_PAGEDRESULTS, NOTIFICATION_DISCONNECT, KNOWN_NOTIFICATIONS, BindRequest, SearchRequest, \
     SearchResultDone, LDAPMessage
 from impacket.ntlm import getNTLMSSPType1, getNTLMSSPType3
-from impacket.spnego import SPNEGO_NegTokenInit, TypesMech
+from impacket.spnego import SPNEGO_NegTokenInit, SPNEGO_NegTokenResp, TypesMech
 
 try:
     import OpenSSL
@@ -115,8 +117,10 @@ class LDAPConnection:
             self._socket.connect(sa)
         else:
             # Switching to TLS now
-            ctx = SSL.Context(SSL.TLSv1_METHOD)
-            # ctx.set_cipher_list('RC4')
+            ctx = SSL.Context(SSL.TLS_METHOD)
+            ctx.set_cipher_list('ALL:@SECLEVEL=0'.encode('utf-8'))
+            SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION = 0x00040000
+            ctx.set_options(SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION)
             self._socket = SSL.Connection(ctx, self._socket)
             self._socket.connect(sa)
             self._socket.do_handshake()
@@ -162,41 +166,9 @@ class LDAPConnection:
         if TGT is not None or TGS is not None:
             useCache = False
 
+        targetName = 'ldap/%s' % self._dstHost
         if useCache:
-            try:
-                ccache = CCache.loadFile(os.getenv('KRB5CCNAME'))
-            except:
-                # No cache present
-                pass
-            else:
-                # retrieve domain information from CCache file if needed
-                if domain == '':
-                    domain = ccache.principal.realm['data'].decode('utf-8')
-                    LOG.debug('Domain retrieved from CCache: %s' % domain)
-
-                LOG.debug('Using Kerberos Cache: %s' % os.getenv('KRB5CCNAME'))
-                principal = 'ldap/%s@%s' % (self._dstHost.upper(), domain.upper())
-                creds = ccache.getCredential(principal)
-                if creds is None:
-                    # Let's try for the TGT and go from there
-                    principal = 'krbtgt/%s@%s' % (domain.upper(), domain.upper())
-                    creds = ccache.getCredential(principal)
-                    if creds is not None:
-                        TGT = creds.toTGT()
-                        LOG.debug('Using TGT from cache')
-                    else:
-                        LOG.debug('No valid credentials found in cache')
-                else:
-                    TGS = creds.toTGS(principal)
-                    LOG.debug('Using TGS from cache')
-
-                # retrieve user information from CCache file if needed
-                if user == '' and creds is not None:
-                    user = creds['client'].prettyPrint().split(b'@')[0].decode('utf-8')
-                    LOG.debug('Username retrieved from CCache: %s' % user)
-                elif user == '' and len(ccache.principal.components) > 0:
-                    user = ccache.principal.components[0]['data'].decode('utf-8')
-                    LOG.debug('Username retrieved from CCache: %s' % user)
+            domain, user, TGT, TGS = CCache.parseFile(domain, user, targetName)
 
         # First of all, we need to get a TGT for the user
         userName = Principal(user, type=constants.PrincipalNameType.NT_PRINCIPAL.value)
@@ -210,7 +182,7 @@ class LDAPConnection:
             sessionKey = TGT['sessionKey']
 
         if TGS is None:
-            serverName = Principal('ldap/%s' % self._dstHost, type=constants.PrincipalNameType.NT_SRV_INST.value)
+            serverName = Principal(targetName, type=constants.PrincipalNameType.NT_SRV_INST.value)
             tgs, cipher, oldSessionKey, sessionKey = getKerberosTGS(serverName, domain, kdcHost, tgt, cipher,
                                                                     sessionKey)
         else:
@@ -328,6 +300,12 @@ class LDAPConnection:
             negotiate = getNTLMSSPType1('', domain)
             bindRequest['authentication']['sicilyNegotiate'] = negotiate.getData()
             response = self.sendReceive(bindRequest)[0]['protocolOp']
+            if response['bindResponse']['resultCode'] != ResultCode('success'):
+                raise LDAPSessionError(
+                    errorString='Error in bindRequest during the NTLMAuthNegotiate request -> %s: %s' %
+                                (response['bindResponse']['resultCode'].prettyPrint(),
+                                 response['bindResponse']['diagnosticMessage'])
+                )
 
             # NTLM Challenge
             type2 = response['bindResponse']['matchedDN']
@@ -335,6 +313,50 @@ class LDAPConnection:
             # NTLM Auth
             type3, exportedSessionKey = getNTLMSSPType3(negotiate, bytes(type2), user, password, domain, lmhash, nthash)
             bindRequest['authentication']['sicilyResponse'] = type3.getData()
+            response = self.sendReceive(bindRequest)[0]['protocolOp']
+        elif authenticationChoice == 'sasl':
+            if lmhash != '' or nthash != '':
+                if len(lmhash) % 2:
+                    lmhash = '0' + lmhash
+                if len(nthash) % 2:
+                    nthash = '0' + nthash
+                try:
+                    lmhash = unhexlify(lmhash)
+                    nthash = unhexlify(nthash)
+                except TypeError:
+                    pass
+
+            bindRequest['name'] = user
+
+            # NTLM Negotiate
+            negotiate = getNTLMSSPType1('', domain)
+
+            blob = SPNEGO_NegTokenInit()
+            blob['MechTypes'] = [TypesMech['NTLMSSP - Microsoft NTLM Security Support Provider']]
+            blob['MechToken'] = negotiate.getData()
+
+            bindRequest['authentication']['sasl']['mechanism'] = 'GSS-SPNEGO'
+            bindRequest['authentication']['sasl']['credentials'] = blob.getData()
+            response = self.sendReceive(bindRequest)[0]['protocolOp']
+            if response['bindResponse']['resultCode'] != ResultCode('saslBindInProgress'):
+                raise LDAPSessionError(
+                    errorString='Error in bindRequest during the NTLMAuthNegotiate request -> %s: %s' %
+                                (response['bindResponse']['resultCode'].prettyPrint(),
+                                 response['bindResponse']['diagnosticMessage'])
+                )
+
+            # NTLM Challenge
+            serverSaslCreds = response['bindResponse']['serverSaslCreds']
+            spnegoTokenResp = SPNEGO_NegTokenResp(serverSaslCreds.asOctets())
+            type2 = spnegoTokenResp['ResponseToken']
+
+            # NTLM Auth
+            type3, exportedSessionKey = getNTLMSSPType3(negotiate, type2, user, password, domain, lmhash, nthash)
+            blob = SPNEGO_NegTokenResp()
+            blob['ResponseToken'] = type3.getData()
+
+            bindRequest['authentication']['sasl']['mechanism'] = 'GSS-SPNEGO'
+            bindRequest['authentication']['sasl']['credentials'] = blob.getData()
             response = self.sendReceive(bindRequest)[0]['protocolOp']
         else:
             raise LDAPSessionError(errorString="Unknown authenticationChoice: '%s'" % authenticationChoice)
@@ -575,14 +597,14 @@ class LDAPConnection:
                 searchFilter['extensibleMatch']['dnAttributes'] = bool(dn)
             if matchingRule:
                 searchFilter['extensibleMatch']['matchingRule'] = matchingRule
-            searchFilter['extensibleMatch']['matchValue'] = value
+            searchFilter['extensibleMatch']['matchValue'] = LDAPConnection._processLdapString(value)
         else:
             if not RE_ATTRIBUTE.match(attribute):
                 raise LDAPFilterInvalidException("invalid filter attribute: '%s'" % attribute)
             if value == '*' and operator == '=':  # present
                 searchFilter['present'] = attribute
             elif '*' in value and operator == '=':  # substring
-                assertions = value.split('*')
+                assertions = [LDAPConnection._processLdapString(assertion) for assertion in value.split('*')]
                 choice = searchFilter['substrings']['substrings'].getComponentType()
                 substrings = []
                 if assertions[0]:
@@ -594,6 +616,7 @@ class LDAPConnection:
                 searchFilter['substrings']['type'] = attribute
                 searchFilter['substrings']['substrings'].setComponents(*substrings)
             elif '*' not in value:  # simple
+                value = LDAPConnection._processLdapString(value)
                 if operator == '=':
                     searchFilter['equalityMatch'].setComponents(attribute, value)
                 elif operator == '~=':
@@ -606,6 +629,15 @@ class LDAPConnection:
                 raise LDAPFilterInvalidException("invalid filter '(%s%s%s)'" % (attribute, operator, value))
 
         return searchFilter
+
+
+    @classmethod
+    def _processLdapString(cls, ldapstr):
+        def replace_escaped_chars(match):
+            return chr(int(match.group(1), 16))  # group(1) == "XX" (valid hex)
+
+        escaped_chars = re.compile(r'\\([0-9a-fA-F]{2})')  # Capture any sequence of "\XX" (where XX is a valid hex)
+        return re.sub(escaped_chars, replace_escaped_chars, ldapstr)
 
 
 class LDAPFilterSyntaxError(SyntaxError):
