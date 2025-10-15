@@ -1,4 +1,6 @@
+Contact: SecureAuth's Innovation Labs  <oss@secureauth.com>
 Bug-Database: https://github.com/SecureAuthCorp/impacket/issues
 Bug-Submit: https://github.com/SecureAuthCorp/impacket/issues/new
-Repository: https://github.com/CoreSecurity/impacket.git
-Repository-Browse: https://github.com/CoreSecurity/impacket
+Repository: https://github.com/SecureAuthCorp/impacket.git
+Repository-Browse: https://github.com/SecureAuthCorp/impacket
+Security-Contact: https://github.com/SecureAuthCorp/impacket/tree/HEAD/SECURITY.md
